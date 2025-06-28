@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>소울워커 미니게임</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+    #joystick-zone {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 150px;
+      height: 150px;
+      z-index: 1000;
+    }
+  </style>
+
+  <!-- ✅ PixiJS 로딩 -->
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.8/dist/browser/pixi.min.js"></script>
+
+  <!-- ✅ nipplejs 로딩 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
+
+  <!-- ✅ main.js는 defer로 나중에 실행 -->
+  <script defer src="./main.js"></script>
+</head>
+<body>
+  <div id="joystick-zone"></div>
+</body>
+</html>
