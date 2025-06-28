@@ -129,6 +129,22 @@ function returnBulletToPool(bullet) {
   bulletPool.push(bullet);
 }
 
+function createNewBullet() {
+  const bullet = new PIXI.Sprite();
+  bullet.anchor.set(0.5);
+  return bullet;
+}
+
+function removeBullet(bullet, index) {
+  returnBulletToPool(bullet);
+  if (typeof index === 'number') {
+    bullets.splice(index, 1);
+  } else {
+    const i = bullets.indexOf(bullet);
+    if (i !== -1) bullets.splice(i, 1);
+  }
+}
+
 
 
 
@@ -919,7 +935,8 @@ function spawnTroublePassProjectiles() {
   if (lvl >= 5) directions.push({ x: 0, y: -1 });   // 위
 
   directions.forEach(dir => {
-    const bullet = PIXI.Sprite.from('images/trouble_pass.png');
+    const bullet = getBulletFromPool();
+    bullet.texture = PIXI.Texture.from('images/trouble_pass.png');
     bullet.anchor.set(0.5);
     bullet.x = player.x;
     bullet.y = player.y;
@@ -1902,8 +1919,8 @@ function spawnChainPierce() {
   const createSpear = (angle, offsetY) => {
     // ✅ 방향별 이미지 분기
     const textureName = offsetY < 0 ? 'images/chainpierce_up.png' : 'images/chainpierce_down.png';
-    const spear = PIXI.Sprite.from(textureName);
-  
+    const spear = getBulletFromPool();
+    spear.texture = PIXI.Texture.from(textureName);
     spear.anchor.set(0.5);
     spear.scale.set(0.4);
     spear.x = player.x;
@@ -3300,8 +3317,7 @@ function updateBullets() {
           player.shakeTimer = 10;
           invincibleTimer = INVINCIBLE_DURATION;
         }
-        world.removeChild(b);
-        bullets.splice(i, 1);
+        removeBullet(b, i);
         continue;
       }
     } else {
@@ -3367,8 +3383,7 @@ function updateBullets() {
         
           // piercing이 아니면 총알 제거
           if (!(b.isGrinder || b.piercing)) {
-            world.removeChild(b);
-            bullets.splice(i, 1);
+            removeBullet(b, i);
             break;
           }
         }
@@ -3396,12 +3411,10 @@ function updateBullets() {
         const dy = b.y - player.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         if (distance > 1200) {
-          world.removeChild(b);
-          bullets.splice(i, 1);
+          removeBullet(b, i);
         }
       } else {
-        world.removeChild(b);
-        bullets.splice(i, 1);
+        removeBullet(b, i);
       }
     }
   }
@@ -3739,7 +3752,8 @@ function spawnWindBreakProjectile() {
       if (isGameOver || isGamePaused || !PLAYER_SHOOT_ENABLED) return;
       if (!selectedSkills['윈드 브레이크']) return;
 
-      const bullet = PIXI.Sprite.from('images/wind_break.png');
+      const bullet = getBulletFromPool();
+      bullet.texture = PIXI.Texture.from('images/wind_break.png');
       bullet.zIndex = 20;
 
       bullet.anchor.set(0.5);
@@ -4222,8 +4236,7 @@ function cleanupGameObjects() {
     const dist = Math.sqrt(dx * dx + dy * dy);
     
     if (dist > 2000) {  // 너무 멀리 있는 총알 제거
-      world.removeChild(b);
-      bullets.splice(i, 1);
+      removeBullet(b, i);
     }
   }
 
@@ -4468,7 +4481,7 @@ function resetGame() {
   enemies.length = 0;
 
   for (const bullet of bullets) {
-    world.removeChild(bullet);
+    removeBullet(bullet);
   }
   bullets.length = 0;
 
